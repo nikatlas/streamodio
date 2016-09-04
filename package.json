@@ -1,0 +1,22 @@
+{
+  "name": "streamodio",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nikatlas/streamodio.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nikatlas/streamodio/issues"
+  },
+  "homepage": "https://github.com/nikatlas/streamodio#readme",
+  "dependencies": {
+    "node-core-audio": "git+https://github.com/ZECTBynmo/node-core-audio.git"
+  }
+}
