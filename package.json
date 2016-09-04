@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/nikatlas/streamodio#readme",
   "dependencies": {
-    "node-core-audio": "git+https://github.com/ZECTBynmo/node-core-audio.git"
+    "node-core-audio": "git+https://github.com/ZECTBynmo/node-core-audio.git",
+    "promise": "^7.1.1"
   }
 }
