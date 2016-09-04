@@ -35,15 +35,15 @@ var streamodio = {
 		});
 		return Promise.resolve(this);
 	},
-	onRead: null,
+	_onRead: null,
 	setOnRead: function (fn) {
-		this.onRead = fn;
+		this._onRead = fn;
 	},
 	start: function (){
 		this._active = true;
 		while(this._active){
 			var input = this.engine.read();
-			if(onRead!=null)onRead(input);
+			if(this._onRead!=null)this._onRead(input);
 		}
 	},
 	stop: function(){
