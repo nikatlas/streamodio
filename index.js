@@ -43,16 +43,18 @@ var streamodio = {
 	setOnRead: function (fn) {
 		streamodio._onRead = fn;
 	},
+    _loop: function () {
+        var input = streamodio.engine.read();
+        if(streamodio._onRead!=null)streamodio._onRead(input);
+        // Silence the 0th channel
+        for( var iSample=0; iSample<input[0].length; ++iSample )
+            input[0][iSample] = 0.0;
+        streamodio.engine.write(input);
+        if(streamodio._active)setTimeout(streamodio._loop,0);
+    },
 	start: function (){
 		streamodio._active = true;
-		while(streamodio._active){
-			var input = streamodio.engine.read();
-			if(streamodio._onRead!=null)streamodio._onRead(input);
-            // Silence the 0th channel
-            for( var iSample=0; iSample<input[0].length; ++iSample )
-                input[0][iSample] = 0.0;
-            streamodio.engine.write(input);
-		}
+        streamodio._loop();
 	},
 	stop: function(){
 		streamodio._active = false;
