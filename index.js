@@ -9,45 +9,53 @@ require('promise/lib/rejection-tracking').enable(
 var streamodio = {
 	engine: null,
 	init: function () {
-		this.engine = coreAudio.createNewAudioEngine();
-		return Promise.resolve(this)
+		streamodio.engine = coreAudio.createNewAudioEngine();
+		return Promise.resolve(streamodio)
 				.then(streamodio.selectStereoMix)
-				.then(streamodio.setOptions);
+				.then(function(){
+                    streamodio.setOptions();
+                });
 	},
 	selectStereoMix: function () {
-		var numDevices = engine.getNumDevices();
+		var numDevices = streamodio.engine.getNumDevices();
 		var dId = null;
 		for (var i = 0; i < numDevices; i++) {
-		    var name = engine.getDeviceName(i);
-		    if (!inputDeviceId && /Stereo Mix/.test(name)) {
+		    var name = streamodio.engine.getDeviceName(i);
+            console.log(name);
+		    if (!dId && /Stereo Mix/.test(name)) {
 		        dId = i;
 		    }
 		}
-		this.inputId = dId;
-		return Promise.resolve(this);
+		streamodio.inputId = dId;
+		return Promise.resolve(streamodio);
 	},
 	setOptions: function () {
-		if(this.inputId == null)return Promise.reject("There is no inputId selected");
-		this.engine.setOptions({
-		    inputChannels: 1,
-		    inputDevice: this.inputId,
-		    outputChannels: 1
-		});
-		return Promise.resolve(this);
+		if(streamodio.inputId == null)return Promise.reject("There is no inputId selected");
+        var opts = {
+            inputChannels: 1,
+            outputChannels: 1,
+            inputDevice: streamodio.inputId
+        }
+		streamodio.engine.setOptions(opts);
+		return Promise.resolve(streamodio);
 	},
 	_onRead: null,
 	setOnRead: function (fn) {
-		this._onRead = fn;
+		streamodio._onRead = fn;
 	},
 	start: function (){
-		this._active = true;
-		while(this._active){
-			var input = this.engine.read();
-			if(this._onRead!=null)this._onRead(input);
+		streamodio._active = true;
+		while(streamodio._active){
+			var input = streamodio.engine.read();
+			if(streamodio._onRead!=null)streamodio._onRead(input);
+            // Silence the 0th channel
+            for( var iSample=0; iSample<input[0].length; ++iSample )
+                input[0][iSample] = 0.0;
+            streamodio.engine.write(input);
 		}
 	},
 	stop: function(){
-		this._active = false;
+		streamodio._active = false;
 	}
 
 };
