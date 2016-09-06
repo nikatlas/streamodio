@@ -8,10 +8,17 @@ require('promise/lib/rejection-tracking').enable(
 
 var streamodio = {
 	engine: null,
-	init: function () {
+	initInput: function () {
 		streamodio.engine = coreAudio.createNewAudioEngine();
 		return Promise.resolve(streamodio)
 				.then(streamodio.selectStereoMix)
+				.then(function(){
+                    streamodio.setOptions();
+                });
+	},
+	init: function () {
+		streamodio.engine = coreAudio.createNewAudioEngine();
+		return Promise.resolve(streamodio)
 				.then(function(){
                     streamodio.setOptions();
                 });
@@ -30,12 +37,13 @@ var streamodio = {
 		return Promise.resolve(streamodio);
 	},
 	setOptions: function () {
-		if(streamodio.inputId == null)return Promise.reject("There is no inputId selected");
         var opts = {
             inputChannels: 1,
-            outputChannels: 1,
-            inputDevice: streamodio.inputId
+            outputChannels: 1
         }
+		if(streamodio.inputId != null){
+            opts.inputDevice = streamodio.inputId
+		}
 		streamodio.engine.setOptions(opts);
 		return Promise.resolve(streamodio);
 	},
